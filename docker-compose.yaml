@@ -7,7 +7,7 @@ services:
     - ./mysql:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: node-complete
+      # MYSQL_DATABASE: node-complete
     ports:
       - 3306:3306
     restart: always

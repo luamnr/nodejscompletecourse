@@ -10,16 +10,26 @@ exports.getAddProduct = (req, res, next) => {
 
 exports.postAddProduct = (req, res, next) => {
 
-    const title = req.body.title;
-    const imageUrl = req.body.imageUrl;
-    const description = req.body.description;
-    const price = req.body.price;
+  const title = req.body.title;
+  const imageUrl = req.body.imageUrl;
+  const description = req.body.description;
+  const price = req.body.price;
 
-    const product =  new Product(null, title, imageUrl, description, price)
-    product.save().then(()=>{
-      res.redirect("/");
-    })
-    .catch(err => {console.log(err)})
+  Product.create({
+    title: title,
+    price: price,
+    imageUrl: imageUrl,
+    description: description,
+  })
+  .then(
+    ret => {
+      // console.log(ret);
+    }
+  )
+  .catch(err=>{
+    console.log(err);
+  })
+  
 };
 
 exports.getEditProduct = (req, res, next) => {
@@ -31,19 +41,19 @@ exports.getEditProduct = (req, res, next) => {
 
   const prodId = req.params.productId;
 
-  Product.findById(prodId, product => {
-
+  Product.findByPk(prodId)
+  .then(product => {
     if (!product){
       return res.redirect("/");
     }
-
     res.render("admin/edit-product", {
       pageTitle: "Edit product",
       path: "/admin/add-product",
       editing: editMode,
       product
-  });
-  });
+    });
+  })
+  .catch(err=>console.log(err));
 };
 
 exports.postEditProduct = (req, res, next) => {
@@ -61,13 +71,15 @@ exports.postEditProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-  Product.fetchAll((products)=>{
-      res.render("admin/products", {
-        pageTitle: "Admin Products", layout: false,
-        products: products, 
-        path: "/"
+  Product.findAll()
+  .then((products)=>{
+    res.render("admin/products", {
+      pageTitle: "Admin Products", layout: false,
+      products: products, 
+      path: "/"
     });
-  });
+  })
+  .catch(err=>console.log(err));
 };
 
 exports.postDeleteProduct = (req, res, next) => {
